@@ -1,37 +1,24 @@
-# devops-netology
-test
+В задании видимо есть ошибка!
+Если на шаге "Переключаемся на ветку git-rebase и выполняем git rebase -i main" выполнить rebase только с ключем -i 
 
-1) **/.terraform/*
+Перед последним шагом "Теперь можно смержить ветку git-rebase в main без конфликтов и без дополнительного мерж-комита простой перемоткой." структура веток выглядит следующим образом
 
-Будут исключены все файлы из скрытого каталога .terraform, каталог может быть вложен в n-ое количество каталогов о чем говорит **/
+![image](https://user-images.githubusercontent.com/111060072/185875085-7bb60599-9787-4e78-9115-c4009c4bf31a.png)
 
-2) *.tfstate *.tfstate.*
+И если сделать merge то он будет выполнен рекурсивно и создастся merge commit, в итоге структура будет совсем непонятная.
 
-Будут исключены все файлы с расширением .tfstate, .*говорит о том, что после расширения могут быть еще n-ое количество символов после точки
+Чтобы этого избежать перед этим шагом на ветке git-rebase можно еще раз выполнить git rebase main и можно не мерджить 
 
-3) crash.log  crash.*.log
+Но я на шеге git rebase -i main выполнил с ключем --preserve-merges после чего исправил конфликты и сообщение там будет 
 
-Исключить лог файлы crash.log и между crash. и .log может быть любое количество символов
+|# This is a combination of 2 commits.
 
-4) *.tfvars *.tfvars.json
+|# This is the 1st commit message:
 
-Исключить файлы с расширением .tfvars и .tfvars.json так как они содержат конфиденциальные данные (пароли, ключи и т.д)
+| git-rebase 2
 
-5) 
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
+|# The commit message #2 will be skipped:
 
-Исключить файлы override.tf, override.tf.json
-Исключить файлы с окончанием  _override.tf и _override.tf.json
+|# git 2.3 rebase @ instead * (2)
 
-6) .terraformrc terraform.rc
-
-Исключить конфигурационный скрытый файл .terraformrc и файл terraform.rc
-
-* Пример исключения файла *.tfstate или override.tf действуют на любом уровне вложенности, но так как файл .gitignore находится в папке terraform/ то вложенность начинается с данной папки
-
-
-
-
+после чего сделал git merge git-rebase и мердж прошел методом Fast-forward
