@@ -60,6 +60,12 @@ commit 41ab0aef7a0fe030e84018973a64135b11abcd70
 commit 66ebff90cdfaa6938f26f908c7ebad8d547fea17
 
 commit 8364383c359a6b738a436d1b7745ccdce178df47
+
+Команды:
+
+git grep -p "globalPluginDirs(" - ищем файлы в которых есть функция globalPluginDirs
+
+git log -L :globalPluginDirs:plugins.go - смотрим коммиты в которых она была изменена 
 ## Кто автор функции synchronizedWriters
 Martin Atkins
 
