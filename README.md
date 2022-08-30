@@ -1,74 +1,53 @@
-## Найдите полный хеш и комментарий коммита, хеш которого начинается на aefea
-commit aefead2207ef7e2aa5dc81a34aedf0cad4c32545
+1-2 VirtualBox и Vagrant установил 
 
-Update CHANGELOG.md
+3 Терминалы использую Xterm и mobaxterm
 
-Команда "git show aefea"
+4 Запустил Ubuntu 20.04 в VirtualBox посредством Vagrant используя VPN
 
-## Какому тегу соответствует коммит 85024d3
+5 По умолчанию выделено:
 
-tag: v0.12.23
+ОЗУ - 1G
+CPU - 2
+HDD - Динамический Gb
+Видеопамять - 4Mb
 
-Команда "git show 85024d3"
+![image](https://user-images.githubusercontent.com/111060072/187512783-7d3ebed1-a3bc-47fd-a80b-103419c3cbb3.png)
 
-## Сколько родителей у коммита b8d720? Напишите их хеши.
-Т.к это merge commit то родителей 2 
+6 Добавить ресурсы можно блоком 
 
-Узнать это можно командой git show b8d720 или посмотреть git log --oneline --graph b8d720
+     config.vm.provider "virtualbox" do |v|
 
-Хеши:
+       v.memory = 1024
 
-56cd7859e05c36c06b56d013b55a252d0bb7e158
+       v.cpus = 2
 
-9ea88f22fc6269854151c571162c5bcf958bee2b
+     end
 
-Команды git show b8d720^1 и git show b8d720^2, можно посмотреть короткие хеши при git show b8d720 вывод Merge: 56cd7859e0 9ea88f22fc
+7 Выполнил команды vagrant up vagrant halt vagrant ssh
 
-##  Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами v0.12.23 и v0.12.24.
-33ff1c03bb (tag: v0.12.24) v0.12.24
+8 ![image](https://user-images.githubusercontent.com/111060072/187504921-74381c84-d4f7-4865-9f02-bac5c11a9c3a.png)
 
-b14b74c493 [Website] vmc provider links
+HISTFILESIZE - Максимальное количество строк, содержащихся в файле истории., строка 586
 
-3f235065b9 Update CHANGELOG.md
+HISTSIZE - Количество команд, которые необходимо запомнить в истории команд, строка 595
 
-6ae64e247b registry: Fix panic when server is unreachable
+Значение ignoreboth является сокращением для ignorespace и ignoredups .
 
-5c619ca1ba website: Remove links to the getting started guide's old location
+Если список значений включает ignorespace , строки, начинающиеся с символа пробела , не сохраняются в списке истории. 
 
-06275647e2 Update CHANGELOG.md
+Значение ignoredups приводит к тому, что строки, соответствующие предыдущей записи истории, не сохраняются.
 
-d5f9411f51 command: Fix bug when using terraform login on Windows
+9 {} - Зарезервированные слова Строка 197 
 
-4b6d06cc5d Update CHANGELOG.md
+10 Можно командой touch {1..100000}, 300000 не получится т.к превышается значение аргументов ARG_MAX
 
-dd01a35078 Update CHANGELOG.md
+11 Проверяет условие и возвращает 0 или 1 при наличии\отсутсвии каталога /tmp
 
-225466bc3e Cleanup after v0.12.23 release
+12 ![image](https://user-images.githubusercontent.com/111060072/187511745-1d27cd3e-8d84-439b-8f77-3c420a0740a3.png)
 
-Команда git log --oneline v0.12.23...v0.12.24
-## Найдите коммит в котором была создана функция func providerSource
-commit 8c928e83589d90a031f811fae52a81be7153e82f
+13 batch — для назначения одноразовых задач, которые должны выполняться, когда загрузка системы становится меньше 0,8.
 
-Команда git log -S "func providerSource" --pretty=format:"%h, %ad" и смотрим по дате 8c928e8358, Thu Apr 2 18:04:39 2020 -0700
-## Найдите все коммиты в которых была изменена функция globalPluginDirs
-commit 78b12205587fe839f10d946ea3fdc06719decb05
+at используется для назначения одноразового задания на заданное время
 
-commit 52dbf94834cb970b510f2fba853a5b49ad9b1a46
+14 Завершил работу виртуальной машины
 
-commit 41ab0aef7a0fe030e84018973a64135b11abcd70
-
-commit 66ebff90cdfaa6938f26f908c7ebad8d547fea17
-
-commit 8364383c359a6b738a436d1b7745ccdce178df47
-
-Команды:
-
-git grep -p "globalPluginDirs(" - ищем файлы в которых есть функция globalPluginDirs
-
-git log -L :globalPluginDirs:plugins.go - смотрим коммиты в которых она была изменена 
-## Кто автор функции synchronizedWriters
-Martin Atkins
-
-Wed May 3 16:25:41 2017
-
-Команда git log -S "synchronizedWriters(" --pretty=format:"%h, %an, %ad"
