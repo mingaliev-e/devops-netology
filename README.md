@@ -1,53 +1,61 @@
-1-2 VirtualBox и Vagrant установил 
+1 cd - это встроенная команда и выполняется в той оболочке в которой запущена
 
-3 Терминалы использую Xterm и mobaxterm
+![image](https://user-images.githubusercontent.com/111060072/188165507-87df1a02-cb60-4ef5-93f0-4470b9d776b2.png)
 
-4 Запустил Ubuntu 20.04 в VirtualBox посредством Vagrant используя VPN
+Если б она не была встроенной то при смене директории нам бы приходилось запускать новый процесс и вызвать bash и при этом бы создавалась новая сессия shell 
 
-5 По умолчанию выделено:
+При каждом переходе запускался бы отдельный дочерний процесс
 
-ОЗУ - 1G
-CPU - 2
-HDD - Динамический Gb
-Видеопамять - 4Mb
+2 
 
-![image](https://user-images.githubusercontent.com/111060072/187512783-7d3ebed1-a3bc-47fd-a80b-103419c3cbb3.png)
+![image](https://user-images.githubusercontent.com/111060072/188132364-9e7e64bf-0d5d-448f-8974-dec2c3e8e90e.png)
 
-6 Добавить ресурсы можно блоком 
+3 systemd
 
-     config.vm.provider "virtualbox" do |v|
+![image](https://user-images.githubusercontent.com/111060072/188132664-7c53a659-7fac-4d84-86de-3aa8e63907db.png)
 
-       v.memory = 1024
+4 ls -lh /opt > /dev/pts/1
 
-       v.cpus = 2
+5 Получится 
 
-     end
+![image](https://user-images.githubusercontent.com/111060072/188139515-8b6b634c-9f62-4ac1-9e6a-8aa4c51e7fac.png)
 
-7 Выполнил команды vagrant up vagrant halt vagrant ssh
+6 Получится например командой sudo echo Hello >/dev/tty1
 
-8 ![image](https://user-images.githubusercontent.com/111060072/187504921-74381c84-d4f7-4865-9f02-bac5c11a9c3a.png)
+7 n>&m означает перенаправить FD n в те же места, что и FD m. Например, 2>&1 означает отправку STDERR в то же место, что и STDOUT.
 
-HISTFILESIZE - Максимальное количество строк, содержащихся в файле истории., строка 586
+STDIN — это FD 0, STDOUT — это FD 1, а STDERR — это FD 2.
 
-HISTSIZE - Количество команд, которые необходимо запомнить в истории команд, строка 595
+т.е. bash 5>&1 - Создаст дескриптор 5 и перенатправит его в stdout
 
-Значение ignoreboth является сокращением для ignorespace и ignoredups .
+echo netology > /proc/$$/fd/5 - выведет в дескриптор "5" сообщение netology, которое будет пернеаправлено в stdout
 
-Если список значений включает ignorespace , строки, начинающиеся с символа пробела , не сохраняются в списке истории. 
+В результате мы получим вывод 
 
-Значение ignoredups приводит к тому, что строки, соответствующие предыдущей записи истории, не сохраняются.
+      root@vagrant:/home/vagrant# echo netology > /proc/$$/fd/5
+      netology
 
-9 {} - Зарезервированные слова Строка 197 
+8 Получится. Для этого нужно поменять местами STDOUT и STDERR. например 6>&1 1>&2 2>&6
 
-10 Можно командой touch {1..100000}, 300000 не получится т.к превышается значение аргументов ARG_MAX
+![image](https://user-images.githubusercontent.com/111060072/188159995-a28dffb1-ed5c-434c-9c66-574efa148c39.png)
 
-11 Проверяет условие и возвращает 0 или 1 при наличии\отсутсвии каталога /tmp
+9 cat /proc/$$/environ выведет переменные окружения 
 
-12 ![image](https://user-images.githubusercontent.com/111060072/187511745-1d27cd3e-8d84-439b-8f77-3c420a0740a3.png)
+их также можно вывести с помощью env в более удобном построчном виде 
 
-13 batch — для назначения одноразовых задач, которые должны выполняться, когда загрузка системы становится меньше 0,8.
+10  /proc/<PID>/cmdline - полный путь до исполняемого файла процесса
+    
+    /proc/<PID>/exe - символическая ссылка содержащая фактический путь к выполняемому процессу
 
-at используется для назначения одноразового задания на заданное время
+11 sse4_2
 
-14 Завершил работу виртуальной машины
+        root@vagrant:/home/vagrant# cat /proc/cpuinfo | grep sse
+        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d
+        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d
+        root@vagrant:/home/vagrant#
 
+12 При подключении по ssh TTY не выделяется для удаленного сеанса. Можно использовать принудительное открытие терминала командой ssh -t localhost 'tty' -t
+
+13 Установил reptyr командой sudo apt install reptyr далее ввел kernel.yama.ptrace_scope = 0 и выполнил задание 
+
+14  echo команда для вывода информации, таким образом при команде sudo echo string > /root/new_file права sudo распрастраняются только на echo, но не на запись в файл в данной директории, команда tee записывает в файл и при команде echo string | sudo tee /root/new_file права sudo на выполение echo необязательны, а на tee как раз обязательны и такаая команда отработает верно. 
