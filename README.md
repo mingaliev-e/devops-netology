@@ -1,61 +1,91 @@
-1 cd - это встроенная команда и выполняется в той оболочке в которой запущена
+1  Какой системный вызов делает команда cd?
 
-![image](https://user-images.githubusercontent.com/111060072/188165507-87df1a02-cb60-4ef5-93f0-4470b9d776b2.png)
+chdir("/tmp")  = 0
 
-Если б она не была встроенной то при смене директории нам бы приходилось запускать новый процесс и вызвать bash и при этом бы создавалась новая сессия shell 
+2  Используя strace выясните, где находится база данных file, на основании которой она делает свои догадки.
 
-При каждом переходе запускался бы отдельный дочерний процесс
+         stat("/root/.magic.mgc", 0x7fff9191b940) = -1 ENOENT (Нет такого файла или каталога)
+         stat("/root/.magic", 0x7fff9191b940)    = -1 ENOENT (Нет такого файла или каталога)
+         openat(AT_FDCWD, "/etc/magic.mgc", O_RDONLY) = -1 ENOENT (Нет такого файла или каталога)
+         stat("/etc/magic", {st_mode=S_IFREG|0644, st_size=111, ...}) = 0
+         openat(AT_FDCWD, "/etc/magic", O_RDONLY) = 3
+         fstat(3, {st_mode=S_IFREG|0644, st_size=111, ...}) = 0
+         read(3, "# Magic local data for file(1) c"..., 4096) = 111
+         read(3, "", 4096)                       = 0
+         close(3)                                = 0
+         openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
 
-2 
+3  Предположим, приложение пишет лог в текстовый файл. Этот файл оказался удален (deleted в lsof), однако возможности сигналом сказать приложению переоткрыть файлы или просто перезапустить приложение – нет. Так как приложение продолжает писать в удаленный файл, место на диске постепенно заканчивается. Основываясь на знаниях о перенаправлении потоков предложите способ обнуления открытого удаленного файла (чтобы освободить место на файловой системе).
 
-![image](https://user-images.githubusercontent.com/111060072/188132364-9e7e64bf-0d5d-448f-8974-dec2c3e8e90e.png)
+echo ""| sudo tee /proc/PID/fd/DESCRIPTOR
 
-3 systemd
+4  Занимают ли зомби-процессы какие-то ресурсы в ОС (CPU, RAM, IO)?
 
-![image](https://user-images.githubusercontent.com/111060072/188132664-7c53a659-7fac-4d84-86de-3aa8e63907db.png)
+Зомби-процессы не занимают освобождают системные ресурсы, но сохраняют свой ID процесса
 
-4 ls -lh /opt > /dev/pts/1
+5  На какие файлы вы увидели вызовы группы open за первую секунду работы утилиты?
 
-5 Получится 
+       [root@localhost admin]# /usr/sbin/opensnoop-bpfcc
+       PID    COMM               FD ERR PATH
+       766    vminfo              6   0 /var/run/utmp
+       562    dbus-daemon        -1   2 /usr/local/share/dbus-1/system-services
+       562    dbus-daemon        18   0 /usr/share/dbus-1/system-services
+       562    dbus-daemon        -1   2 /lib/dbus-1/system-services
+       562    dbus-daemon        18   0 /var/lib/snapd/dbus-1/system-services/
 
-![image](https://user-images.githubusercontent.com/111060072/188139515-8b6b634c-9f62-4ac1-9e6a-8aa4c51e7fac.png)
+6  Какой системный вызов использует uname -a? Приведите цитату из man по этому системному вызову, где описывается альтернативное местоположение в /proc, где можно узнать версию ядра и релиз ОС.
 
-6 Получится например командой sudo echo Hello >/dev/tty1
+системный вызов uname()
 
-7 n>&m означает перенаправить FD n в те же места, что и FD m. Например, 2>&1 означает отправку STDERR в то же место, что и STDOUT.
+       Part of the utsname information is also accessible  via  /proc/sys/ker‐nel/{ostype, hostname, osrelease, version, domainname}.
+       
+ 7  Чем отличается последовательность команд через ; и через && в bash? 
+ 
+       ; - выполелнение команд последовательно
+       && - команда после && выполняется только если команда до && завершилась успешно (статус выхода 0)
 
-STDIN — это FD 0, STDOUT — это FD 1, а STDERR — это FD 2.
+Если /tmp/some_dir не существует, то статус выхода не равен 0 и echo Hi не будет выполняться
+  
+set -e - останавливает выполнение команд при ошибке кроме последней команды
 
-т.е. bash 5>&1 - Создаст дескриптор 5 и перенатправит его в stdout
+Если ошибочно завершится одна из команд, разделённых &&, то выхода из шелла не произойдёт. Так что, смысл есть.
 
-echo netology > /proc/$$/fd/5 - выведет в дескриптор "5" сообщение netology, которое будет пернеаправлено в stdout
+8  Из каких опций состоит режим bash set -euxo pipefail и почему его хорошо было бы использовать в сценариях?
 
-В результате мы получим вывод 
+      -e  Exit immediately if a command exits with a non-zero status.
+      -u  Treat unset variables as an error when substituting.
+      -x  Print commands and their arguments as they are executed.
+      -o pipefail     the return value of a pipeline is the status of
+                           the last command to exit with a non-zero status,
+                           or zero if no command exited with a non-zero status
+Режим обеспечит прекращение выполнения скрипта в случае ошибок и выведет необходимую для информацию для исправления ошибки 
 
-      root@vagrant:/home/vagrant# echo netology > /proc/$$/fd/5
-      netology
+9  Используя -o stat для ps, определите, какой наиболее часто встречающийся статус у процессов в системе. В man ps ознакомьтесь (/PROCESS STATE CODES) что значат дополнительные к основной заглавной буквы статуса процессов. Его можно не учитывать при расчете (считать S, Ss или Ssl равнозначными).
 
-8 Получится. Для этого нужно поменять местами STDOUT и STDERR. например 6>&1 1>&2 2>&6
+Наиболее часто встречаются процессы с STAT = S, Ss или Ssl - (прерываемый сон), ожидающие дальнейшей команды/сигналов.
 
-![image](https://user-images.githubusercontent.com/111060072/188159995-a28dffb1-ed5c-434c-9c66-574efa148c39.png)
+Here are the different values that the s, stat and state output specifiers (header "STAT" or "S") will display
+       to describe the state of a process:
 
-9 cat /proc/$$/environ выведет переменные окружения 
+               D    uninterruptible sleep (usually IO)
+               I    Idle kernel thread
+               R    running or runnable (on run queue)
+               S    interruptible sleep (waiting for an event to complete)
+               T    stopped by job control signal
+               t    stopped by debugger during the tracing
+               W    paging (not valid since the 2.6.xx kernel)
+               X    dead (should never be seen)
+               Z    defunct ("zombie") process, terminated but not reaped by its parent
 
-их также можно вывести с помощью env в более удобном построчном виде 
+       For BSD formats and when the stat keyword is used, additional characters may be displayed:
 
-10  /proc/<PID>/cmdline - полный путь до исполняемого файла процесса
-    
-    /proc/<PID>/exe - символическая ссылка содержащая фактический путь к выполняемому процессу
+               <    high-priority (not nice to other users)
+               N    low-priority (nice to other users)
+               L    has pages locked into memory (for real-time and custom IO)
+               s    is a session leader
+               l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+               +    is in the foreground process group
 
-11 sse4_2
 
-        root@vagrant:/home/vagrant# cat /proc/cpuinfo | grep sse
-        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d
-        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d
-        root@vagrant:/home/vagrant#
 
-12 При подключении по ssh TTY не выделяется для удаленного сеанса. Можно использовать принудительное открытие терминала командой ssh -t localhost 'tty' -t
 
-13 Установил reptyr командой sudo apt install reptyr далее ввел kernel.yama.ptrace_scope = 0 и выполнил задание 
-
-14  echo команда для вывода информации, таким образом при команде sudo echo string > /root/new_file права sudo распрастраняются только на echo, но не на запись в файл в данной директории, команда tee записывает в файл и при команде echo string | sudo tee /root/new_file права sudo на выполение echo необязательны, а на tee как раз обязательны и такаая команда отработает верно. 
