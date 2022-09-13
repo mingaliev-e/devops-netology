@@ -1,3 +1,5 @@
+# Домашнее задание по лекции "Операционные системы (лекция 1)"
+
 1  Какой системный вызов делает команда cd?
 
 chdir("/tmp")  = 0
@@ -85,6 +87,107 @@ Here are the different values that the s, stat and state output specifiers (head
                s    is a session leader
                l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
                +    is in the foreground process group
+
+# Домашнее задание по лекции "Операционные системы (лекция 2)"
+
+1  Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter:
+
+поместите его в автозагрузку, предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на systemctl cat cron), удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+
+![image](https://user-images.githubusercontent.com/111060072/189930937-b87859d9-0bec-4d3f-8152-e7b3f3ebc5f5.png)
+
+![image](https://user-images.githubusercontent.com/111060072/189931165-ac521640-6b52-43ab-bf60-a70c6a9b2a08.png)
+
+Служба работает, автозагрузка работает, после ребута стартует 
+
+2  Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
+
+CPU
+
+         node_cpu_seconds_total{cpu="0",mode="idle"}
+         node_cpu_seconds_total{cpu="0",mode="system"}
+         node_cpu_seconds_total{cpu="0",mode="user"}
+         node_cpu_seconds_total{cpu="1",mode="idle"}
+         node_cpu_seconds_total{cpu="1",mode="system"}
+         node_cpu_seconds_total{cpu="1",mode="user"}
+
+ОЗУ
+
+         node_memory_MemAvailable_bytes
+         node_memory_MemFree_bytes
+         node_memory_Buffers_bytes
+         node_memory_Cached_bytes
+         
+Диск sda
+
+         node_disk_io_time_seconds_total{device="sda"}
+         node_disk_read_time_seconds_total{device="sda"}
+         node_disk_write_time_seconds_total{device="sda"}
+         node_filesystem_avail_bytes
+         
+Сеть 
+
+         node_network_info
+         node_network_receive_bytes_total
+         node_network_receive_errs_total
+         node_network_transmit_bytes_total
+         node_network_transmit_errs_total
+
+3  Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata). 
+
+![image](https://user-images.githubusercontent.com/111060072/189946564-0d7217b6-1c27-45f5-8ca9-47e0581cfc25.png)
+
+4  Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
+
+Можно 
+
+![image](https://user-images.githubusercontent.com/111060072/189946946-3b091b27-0955-4492-b239-92b0c53ecd93.png)
+
+5  Как настроен sysctl fs.nr_open на системе по-умолчанию? Узнайте, что означает этот параметр. Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
+
+sysctl fs.nr_open - Лимит на количество открытых дескрипторов ему же соответствует файл /proc/sys/fs/nr_open
+
+         vagrant@vagrant:~$ sysctl fs.nr_open
+         fs.nr_open = 1048576
+
+но такой лимит недостижим, потому что 
+
+         vagrant@vagrant:~$ ulimit -n
+         1024
+
+6  Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter
+
+![image](https://user-images.githubusercontent.com/111060072/189951452-5abdea0c-a357-4115-9b12-dc842fa32ce8.png)
+
+7  Найдите информацию о том, что такое :(){ :|:& };:. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (это важно, поведение в других ОС не проверялось). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов dmesg расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
+
+это функция, которая параллельно пускает два своих экземпляра. Каждый пускает ещё по два и т.д.
+
+можно записать иначе как:
+
+         f() {
+           f | f &
+         }
+         f
+         
+dmesg 
+
+[ 2310.956271] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-4.scope
+
+По умолчанию 
+root@vagrant:/# ulimit -u
+3554
+
+изменить можно ulimit -u 700 
+
+
+
+
+
+
+
+
+
 
 
 
