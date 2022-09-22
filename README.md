@@ -1,211 +1,86 @@
-1 Узнайте о sparse (разряженных) файлах.
+# Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
 
-Разреженные файлы - это такие файлы, которые занимают меньше дискового пространства, чем их собственный размер. Данная технология не имеет отношения к встроенной в NTFS поддержке компрессии файлов, так как экономия места на диске в sparse-файлах основана на другом принципе. Никакого сжатия данных не осуществляется. Вместо этого, в файле высвобождаются области, занятые одними лишь нулями (0x00).
+1  Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
 
-2 Могут ли файлы, являющиеся жесткой ссылкой на один объект, иметь разные права доступа и владельца? Почему?
+         Linux - ip link
+         Windows Powershell - Get-NetAdapter или Get-NetIPInterface
+         Windows CMD - netsh interface show interface или ipconfig /all
 
-Нет, т.к при изменении одного из файлов второй тоже будет изменен, т.к фактически будет меняться цифровой объект на диске, у жестких ссылок всегда один и тот же набор прав
+2   Какой протокол используется для распознавания соседа по сетевому интерфейсу? Какой пакет и команды есть в Linux для этого?
 
-3 Сделайте vagrant destroy на имеющийся инстанс Ubuntu. Замените содержимое Vagrantfile следующим:
+LLDP. sudo apt install lldp
 
-Готово ![image](https://user-images.githubusercontent.com/111060072/190217852-4517a434-67cc-4d43-a772-f2895c06d8e8.png)
+systemctl start lldpd
 
-4 Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.
+lldpctl
 
-![image](https://user-images.githubusercontent.com/111060072/190220204-d66bbec1-e259-469f-8ed7-65f8e770a089.png)
-![image](https://user-images.githubusercontent.com/111060072/190220304-047fd609-c95e-4f75-8bce-c6733ac6b814.png)
+3   Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
 
-5 Используя sfdisk, перенесите данную таблицу разделов на второй диск.
+Технология VLAN - Virtual Local Area Network
 
-![image](https://user-images.githubusercontent.com/111060072/190220824-cc6cd97b-c2ec-46ea-b811-4e875e5486df.png)
+![image](https://user-images.githubusercontent.com/111060072/191718314-5f3f96d0-a865-4290-9898-486a65a2f4a5.png)
 
-6 Соберите mdadm RAID1 на паре разделов 2 Гб.
+Конфигурация удалится при перезапуске, чтоб не удалялась нужно править конфиг /etc/network/interfaces
 
-![image](https://user-images.githubusercontent.com/111060072/190222624-a189bd0e-e0fe-4596-a024-d9f6018709f2.png)
+4  Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
 
-7 Соберите mdadm RAID0 на второй паре маленьких разделов.
+         Mode-0(balance-rr)
+         Mode-1(active-backup)
+         Mode-2(balance-xor)
+         Mode-3(broadcast)
+         Mode-4(802.3ad)
+         Mode-5(balance-tlb)
+         Mode-6(balance-alb)
+         
+Пример конфига 
 
-![image](https://user-images.githubusercontent.com/111060072/190222936-e04d726d-3d3e-4598-a501-220075afb5a8.png)
+         bonds:
+             bond0:
+               dhcp4: no
+               interfaces: [eth0, eth1]
+               parameters: 
+                 mode: 802.3ad
+                 mii-monitor-interval: 1
 
-8 Создайте 2 независимых PV на получившихся md-устройствах.
-         root@vagrant:/home/vagrant# pvcreate /dev/md0 /dev/md1
-           Physical volume "/dev/md0" successfully created.
-           Physical volume "/dev/md1" successfully created.
-           
-![image](https://user-images.githubusercontent.com/111060072/190225788-47d45c22-d0bd-4612-9ca2-b8ea60afb4bd.png)
+5  Сколько IP адресов в сети с маской /29 ? Сколько /29 подсетей можно получить из сети с маской /24. Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
 
-9 Создайте общую volume-group на этих двух PV.
+         vagrant@vagrant:~$ sudo ipcalc 10.10.10.0/29
+         Address:   10.10.10.0           00001010.00001010.00001010.00000 000
+         Netmask:   255.255.255.248 = 29 11111111.11111111.11111111.11111 000
+         Wildcard:  0.0.0.7              00000000.00000000.00000000.00000 111
+         =>
+         Network:   10.10.10.0/29        00001010.00001010.00001010.00000 000
+         HostMin:   10.10.10.1           00001010.00001010.00001010.00000 001
+         HostMax:   10.10.10.6           00001010.00001010.00001010.00000 110
+         Broadcast: 10.10.10.7           00001010.00001010.00001010.00000 111
+         Hosts/Net: 6                     Class A, Private Internet
+/29 всего 8 ip адресов, 2 из которых зантяы на ip сети и широковещательный ip 
 
-         root@vagrant:/home/vagrant# vgcreate vg1 /dev/md0 /dev/md1
-           Volume group "vg1" successfully created
+Из сети /24 можно получить 32 подсети /29
 
-![image](https://user-images.githubusercontent.com/111060072/190225854-dfdd1d96-5401-4b32-a8ae-7bddd39db612.png)
+6  Задача: вас попросили организовать стык между 2-мя организациями. Диапазоны 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 уже заняты. Из какой подсети допустимо взять частные IP адреса? Маску выберите из расчета максимум 40-50 хостов внутри подсети.
 
-10 Создайте LV размером 100 Мб, указав его расположение на PV с RAID0.
+100.64.0.0/26
 
-![image](https://user-images.githubusercontent.com/111060072/190226121-4bb5cf6e-635f-424e-8e5f-bfb015a69a08.png)
+![image](https://user-images.githubusercontent.com/111060072/191722541-a3883e06-0117-4aae-bee8-5b375225ecaa.png)
 
-11 Создайте mkfs.ext4 ФС на получившемся LV.
+7  Как проверить ARP таблицу в Linux, Windows? Как очистить ARP кеш полностью? Как из ARP таблицы удалить только один нужный IP?
 
-![image](https://user-images.githubusercontent.com/111060072/190226380-98c4ea1d-f145-41cf-abfa-f1a0e335e9d1.png)
+Ubuntu/Debian
 
-12 Смонтируйте этот раздел в любую директорию, например, /tmp/new.
+ip neighbour show - показать ARP таблицу
 
-![image](https://user-images.githubusercontent.com/111060072/190226991-93a8468c-a0e8-4342-b5cc-ca8ea5111c53.png)
+ip neighbour del [ip address] dev [interface] - удалить из ARP таблицы конкретный адрес
 
-13 Поместите туда тестовый файл, например wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz.
+ip neighbour flush all - очистить ARP таблицу
 
-![image](https://user-images.githubusercontent.com/111060072/190227127-972269a4-85fd-4f8e-8b4d-5fc17db529b8.png)
+Windows
 
-14 Прикрепите вывод lsblk.
+arp -a - показать ARP таблицу
 
-![image](https://user-images.githubusercontent.com/111060072/190227201-55171cea-d909-4a62-9b5b-591f1489f427.png)
+arp -d [ip address] - удалить из ARP таблицы конкретный адрес
 
-15 Протестируйте целостность файла:
-
-         root@vagrant:/home/vagrant# gzip -t /tmp/new/test.gz
-         root@vagrant:/home/vagrant# echo $?
-         0
-
-16 Используя pvmove, переместите содержимое PV с RAID0 на RAID1.
-
-         root@vagrant:/home/vagrant# pvmove /dev/md0 /dev/md1
-           /dev/md0: Moved: 12.00%
-           /dev/md0: Moved: 100.00%
-17 Сделайте --fail на устройство в вашем RAID1 md.
-
-         root@vagrant:/home/vagrant# mdadm /dev/md1 -f /dev/sdc1
-         mdadm: set /dev/sdc1 faulty in /dev/md1
-
-18 Подтвердите выводом dmesg, что RAID1 работает в деградированном состоянии.
-
-![image](https://user-images.githubusercontent.com/111060072/190229085-d9f74495-6ab8-44c7-8694-938a8fdff9b0.png)
-
-19 Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:
-
-         root@vagrant:/home/vagrant# gzip -t /tmp/new/test.gz
-         root@vagrant:/home/vagrant# echo $?
-         0
-
-20 Погасите тестовый хост, vagrant destroy.
-
-Выполнено:
-
-
-# Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
-
-1 Работа c HTTP через телнет.
-
-         [root@localhost admin]# telnet stackoverflow.com 80
-         Trying 151.101.129.69...
-         Connected to stackoverflow.com.
-         Escape character is '^]'.
-         GET /questions HTTP/1.0
-         HOST: stackoverflow.com
-
-         HTTP/1.1 301 Moved Permanently
-         Server: Varnish
-         Retry-After: 0
-         Location: https://stackoverflow.com/questions
-         Content-Length: 0
-         Accept-Ranges: bytes
-         Date: Thu, 15 Sep 2022 13:10:01 GMT
-         Via: 1.1 varnish
-         Connection: close
-         X-Served-By: cache-fra19124-FRA
-         X-Cache: HIT
-         X-Cache-Hits: 0
-         X-Timer: S1663247402.614538,VS0,VE0
-         Strict-Transport-Security: max-age=300
-         X-DNS-Prefetch-Control: off
-
-         Connection closed by foreign host.
-
-Ответ HTTP 301 Moved Permanently. Ресурс был перещен 
-
-2 Повторите задание 1 в браузере, используя консоль разработчика F12.
-
-![image](https://user-images.githubusercontent.com/111060072/190415410-66d40eae-8b03-4311-b687-2dea6104f3d0.png)
-
-Первый ответ сервера HTTP 307 Internal Redirect
-
-![image](https://user-images.githubusercontent.com/111060072/190416120-193711ad-6677-4d53-a71b-e1110e028d43.png)
-
-Время загрузки страницы 3,86ms, дольше всего обрабатывался запрос https://www.googletagmanager.com/gtag/js?id=G-WCZ03SZFCQ 245,62ms 
-
-![image](https://user-images.githubusercontent.com/111060072/190417204-236dc938-4c6c-4905-9f87-62be0e5ce968.png)
-
-3 Какой IP адрес у вас в интернете?
-
-можно узнать через https://whoer.net/ru или https://2ip.ru/
-
-ip 195.19.\*.*
-
-4 Какому провайдеру принадлежит ваш IP адрес? Какой автономной системе AS? Воспользуйтесь утилитой whois
-
-         descr:          ELECTROSVYAZ
-         origin:         AS44391
-
-5 Через какие сети проходит пакет, отправленный с вашего компьютера на адрес 8.8.8.8? Через какие AS? Воспользуйтесь утилитой traceroute
-
-![image](https://user-images.githubusercontent.com/111060072/190419691-bc7b63f6-66ea-4185-a8fe-cd4ff784909e.png)
-
-6 Повторите задание 5 в утилите mtr. На каком участке наибольшая задержка - delay?
-
-![image](https://user-images.githubusercontent.com/111060072/190421928-28ca5f89-cfdd-4b66-9132-ba29bd1ca4be.png)
-
-по средним значениям на 14 участке 
-
-7 Какие DNS сервера отвечают за доменное имя dns.google? Какие A записи? воспользуйтесь утилитой dig
-
-         [root@localhost admin]# dig +short NS dns.google
-         ns2.zdns.google.
-         ns4.zdns.google.
-         ns3.zdns.google.
-         ns1.zdns.google.
-         [root@localhost admin]#
-         [root@localhost admin]# dig +short A dns.google
-         8.8.4.4
-         8.8.8.8
-         [root@localhost admin]#
-
-8 Проверьте PTR записи для IP адресов из задания 7. Какое доменное имя привязано к IP? воспользуйтесь утилитой dig
-
-         [root@localhost admin]# dig +noall +answer -x 8.8.8.8
-         8.8.8.8.in-addr.arpa.   20956   IN      PTR     dns.google.
-         [root@localhost admin]#
-         [root@localhost admin]# dig +noall +answer -x 8.8.4.4
-         4.4.8.8.in-addr.arpa.   14043   IN      PTR     dns.google.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+arp -d * - очистить таблицу ARP
 
 
 
