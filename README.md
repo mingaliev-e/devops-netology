@@ -79,7 +79,7 @@ Pull сам инициирует запросы
 Выполнено
 
 vagrant@server1:~$ VBoxManage --version
-7.0.2
+6.1.34r150636
 
 vagrant@server1:~$ vagrant -v
 Vagrant 2.3.2
