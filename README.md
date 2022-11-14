@@ -6,7 +6,7 @@
 
 ## Задача 2
 
-
+![image](https://user-images.githubusercontent.com/111060072/201786020-1142c5fa-5306-4bb2-a39e-1efa0507d8d5.png)
 
 ## Задача 3
 
