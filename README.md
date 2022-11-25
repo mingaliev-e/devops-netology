@@ -6,7 +6,7 @@
 
 ## Задача 2
 
-![image](https://user-images.githubusercontent.com/111060072/204035749-32bfaeb5-0831-4edd-8cef-d4ea70ec1626.png)
+![image](https://user-images.githubusercontent.com/111060072/204051827-7d10ab21-5a3b-4239-bdb6-094fa56a1445.png)
 
 ![image](https://user-images.githubusercontent.com/111060072/204035782-0e4ea6f2-733a-4ff9-9135-418e747174ec.png)
 
@@ -30,8 +30,52 @@
 
 ## Задача 4
 
+    test_db=# UPDATE clients SET booking_id = (SELECT id FROM orders WHERE name = 'Книга') WHERE surname = 'Иванов Иван Иванович';
+    UPDATE 1
+    test_db=# UPDATE clients SET booking_id = (SELECT id FROM orders WHERE name = 'Монитор') WHERE surname = 'Петров Петр Петрович';
+    UPDATE 1
+    test_db=# UPDATE clients SET booking_id = (SELECT id FROM orders WHERE name = 'Гитара') WHERE surname = 'Иоганн Себастьян Бах';
+    UPDATE 1
 
+    test_db=# SELECT * FROM clients WHERE booking_id IS NOT NULL;
+     id |       surname        | country | booking_id
+    ----+----------------------+---------+------------
+      1 | Иванов Иван Иванович | USA     |          3
+      2 | Петров Петр Петрович | Canada  |          4
+      3 | Иоганн Себастьян Бах | Japan   |          5
+    (3 rows)
 
+    test_db=#
+
+## Задача 5
+
+    test_db=# EXPLAIN SELECT * FROM clients WHERE booking_id IS NOT NULL;
+                            QUERY PLAN
+    -----------------------------------------------------------
+     Seq Scan on clients  (cost=0.00..18.10 rows=806 width=72)
+       Filter: (booking_id IS NOT NULL)
+    (2 rows)
+
+    test_db=#
+
+Из документации:
+Приблизительная стоимость запуска. Это время, которое проходит, прежде чем начнётся этап вывода данных, например для сортирующего узла это время сортировки.
+
+Приблизительная общая стоимость. Она вычисляется в предположении, что узел плана выполняется до конца, то есть возвращает все доступные строки. На практике родительский узел может досрочно прекратить чтение строк дочернего (см. приведённый ниже пример с LIMIT).
+
+Ожидаемое число строк, которое должен вывести этот узел плана. При этом так же предполагается, что узел выполняется до конца.
+
+Ожидаемый средний размер строк, выводимых этим узлом плана (в байтах).
+
+## Задача 6
+
+Создал бекап
+
+    pg_dump -U postgres test_db > /var/lib/postgresql/backup/test_db_backup.sql
+    
+Удалил старый и запустил новый контейнер, создал базу test_db, и восстановил данные из бекапа командой:
+
+    psql -U postgres test_db -f /var/lib/postgresql/backup/test_db_backup.sql
 
 # Домашнее задание к занятию "6.1. Типы и структура СУБД"
 
