@@ -1,3 +1,38 @@
+# Домашнее задание к занятию "6.2. SQL"
+
+## Задача 1
+
+![image](https://user-images.githubusercontent.com/111060072/204028966-389b00c5-5ad3-4295-bc5e-6e389d5e7a82.png)
+
+## Задача 2
+
+![image](https://user-images.githubusercontent.com/111060072/204035749-32bfaeb5-0831-4edd-8cef-d4ea70ec1626.png)
+
+![image](https://user-images.githubusercontent.com/111060072/204035782-0e4ea6f2-733a-4ff9-9135-418e747174ec.png)
+
+## Задача 3
+
+    test_db=# insert into orders VALUES (1, 'Шоколад', 10), (2, 'Принтер', 3000), (3, 'Книга', 500), (4, 'Монитор', 7000), (5, 'Гитара', 4000);
+    INSERT 0 5
+    test_db=# insert into clients VALUES (1, 'Иванов Иван Иванович', 'USA'), (2, 'Петров Петр Петрович', 'Canada'), (3, 'Иоганн Себастьян Бах', 'Japan'), (4, 'Ронни Джеймс Дио', 'Russia'), (5, 'Ritchie Blackmore', 'Russia');
+    INSERT 0 5
+    test_db=# select count (*) from orders;
+     count
+    -------
+         5
+    (1 row)
+
+    test_db=# select count (*) from clients;
+     count
+    -------
+         5
+    (1 row)
+
+## Задача 4
+
+
+
+
 # Домашнее задание к занятию "6.1. Типы и структура СУБД"
 
 ## Задача 1
