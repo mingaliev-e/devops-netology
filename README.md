@@ -1,3 +1,93 @@
+# Домашнее задание к занятию "6.4. PostgreSQL"
+
+## Задача 1
+
+    # docker pull postgres:13
+    13: Pulling from library/postgres
+    Digest: sha256:3c6a77caf1ef2ae91ef1a2cdc2ae219e65e9ea274fbfa0d44af3ec0fccef0d8d
+    Status: Image is up to date for postgres:13
+    docker.io/library/postgres:13
+    
+    # docker run -d --name postgres_db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v ~/postgres/data:/var/lib/postgresql/data -v ~/postgres/backup:/var/lib/postgresql/backup postgres:13
+    672b1f74cd574d359daed05c145b22665743557f2b935aba8646632927efd34d
+    
+    docker exec -ti 672b1f74cd57 bash
+    root@672b1f74cd57:/# su - postgres
+    postgres@672b1f74cd57:~$ psql
+    
+    \l - список БД
+    \c[onnect] {[DBNAME|- USER|- HOST|- PORT|-] | conninfo} connect to new database (currently "postgres") - подключение к БД
+    \dt[S+] [PATTERN] - список таблиц
+    \d[S+]  NAME - описание содержимого таблиц
+    \q - выход из psql
+    
+## Задача 2
+
+    root@672b1f74cd57:/# psql -U postgres test_database -f /var/lib/postgresql/backup/test_dump.sql
+    SET
+    SET
+    SET
+    SET
+    SET
+     set_config
+    ------------
+
+    (1 row)
+
+    SET
+    SET
+    SET
+    SET
+    SET
+    SET
+    CREATE TABLE
+    ALTER TABLE
+    CREATE SEQUENCE
+    ALTER TABLE
+    ALTER SEQUENCE
+    ALTER TABLE
+    COPY 8
+     setval
+    --------
+          8
+    (1 row)
+
+    ALTER TABLE
+
+![image](https://user-images.githubusercontent.com/111060072/205492286-0aa66f7a-ef2d-450c-afcd-95126bd78c80.png)
+
+## Задача 3
+
+Можно было, если на этапе проетирования сразу создавать секционированную таблицу(примеры есть в офф доке https://www.postgresql.org/docs/current/ddl-partitioning.html) 
+
+    BEGIN;
+    CREATE TABLE orders_new(id SERIAL, title VARCHAR(80) NOT NULL, price integer DEFAULT 0) PARTITION BY RANGE (price);
+    CREATE TABLE orders_price_gt_499 PARTITION OF orders_new FOR VALUES FROM (500) TO (2147483647);
+    CREATE TABLE orders_price_lte_499 PARTITION OF orders_new FOR VALUES FROM (0) TO (500);
+    INSERT INTO orders_new SELECT * FROM orders;
+    DROP TABLE orders;
+    ALTER TABLE orders_new RENAME TO orders;
+    COMMIT;
+
+## Задача 4
+
+    root@672b1f74cd57:/# pg_dump -U postgres -d test_database > /var/lib/postgresql/backup/new_backup.sql
+
+Добавить UNIQUE к полям title 
+
+    CREATE TABLE public.orders_price_lte_499 (
+        id integer DEFAULT nextval('public.orders_new_id_seq'::regclass) NOT NULL,
+        title character varying(80) NOT NULL UNIQUE,
+        price integer DEFAULT 0
+    );
+
+    CREATE TABLE public.orders_price_gt_499 (
+        id integer DEFAULT nextval('public.orders_new_id_seq'::regclass) NOT NULL,
+        title character varying(80) NOT NULL UNIQUE,
+        price integer DEFAULT 0
+    );
+
+
 # Домашнее задание к занятию "6.3. MySQL"
 
 ## Задача 1
