@@ -1,101 +1,49 @@
-# Домашнее задание к занятию "6.3. MySQL"
+# Домашнее задание к занятию "6.1. Типы и структура СУБД"
 
 ## Задача 1
 
-    docker pull mysql:8.0
-    8.0: Pulling from library/mysql
-    Digest: sha256:66efaaa129f12b1c5871508bc8481a9b28c5b388d74ac5d2a6fc314359bbef91
-    Status: Image is up to date for mysql:8.0
-    docker.io/library/mysql:8.0
-    docker volume create vol_mysql
-    vol_mysql
-    docker run --rm --name mysql-docker -e MYSQL_ROOT_PASSWORD=mysql -ti -p 3306:3306 -v vol_mysql:/etc/mysql/ mysql:8.0
+Электронные чеки в json виде: Документо-ориентированная - классичиское применение документов json
 
-Найдите команду для выдачи статуса БД и приведите в ответе из ее вывода версию сервера БД:
+Склады и автомобильные дороги для логистической компании - Сетевая или графовая БД
 
-    Server version:         8.0.31 MySQL Community Server - GPL
-    
-Подключитесь к восстановленной БД и получите список таблиц из этой БД:
+Генеалогические деревья - подойдут БД использующие иерархические модель данных
 
-    docker cp virt-homeworks/06-db-03-mysql/test_data/test_dump.sql c2c0053d66c6:/etc/mysql
-    docker exec -ti c2c0053d66c6 bash
-    
-    bash-4.4# export DBNAME=test_db
-    bash-4.4# mysql -u root -p
-    mysql> CREATE DATABASE test_db;
+Кэш идентификаторов клиентов с ограниченным временем жизни для движка аутенфикации - проще хранить в озу, так что Redis или Memcached
 
-    bash-4.4# mysql -u root -p ${DBNAME} < /etc/mysql/test_dump.sql
-    bash-4.4# mysql -u root -p
-    mysql> select count(*) from orders where price >300;
-    +----------+
-    | count(*) |
-    +----------+
-    |        1 |
-    +----------+
-    1 row in set (0.00 sec)
+Отношения клиент-покупка для интернет-магазина - реляционные БД, т.к простая связь между двумя сущностями
 
 ## Задача 2
 
-    mysql> create user 'test'@'localhost'
-        -> identified with mysql_native_password by 'test-pass'
-        -> with max_queries_per_hour 100
-        -> password expire interval 180 day
-        -> failed_login_attempts 3
-        -> attribute '{"fname": "James","lname": "Pretty"}';
-    Query OK, 0 rows affected (0.08 sec)
+Вы создали распределенное высоконагруженное приложение и хотите классифицировать его согласно CAP-теореме. Какой классификации по CAP-теореме соответствует ваша система, если (каждый пункт - это отдельная реализация вашей системы и для каждого пункта надо привести классификацию):
 
-    mysql> GRANT Select ON test_db.orders TO 'test'@'localhost';
-    Query OK, 0 rows affected, 1 warning (0.01 sec)
+    Данные записываются на все узлы с задержкой до часа (асинхронная запись)
+    При сетевых сбоях, система может разделиться на 2 раздельных кластера
+    Система может не прислать корректный ответ или сбросить соединение
 
-    mysql> SELECT * FROM INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='test';
-    +------+-----------+---------------------------------------+
-    | USER | HOST      | ATTRIBUTE                             |
-    +------+-----------+---------------------------------------+
-    | test | localhost | {"fname": "James", "lname": "Pretty"} |
-    +------+-----------+---------------------------------------+
-    1 row in set (0.00 sec)
+    CA | PC/EL
+    PA | PA/EL
+    PC | PA/EC
 
 ## Задача 3
 
-    mysql> show table status where name = 'orders';
-    +--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
-    | Name   | Engine | Version | Row_format | Rows | Avg_row_length | Data_length | Max_data_length | Index_length | Data_free | Auto_increment | Create_time         | Update_time         | Check_time | Collation          | Checksum | Create_options | Comment |
-    +--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
-    | orders | InnoDB |      10 | Dynamic    |    5 |           3276 |       16384 |               0 |            0 |         0 |              6 | 2022-12-04 10:47:15 | 2022-12-04 10:47:15 | NULL       | utf8mb4_0900_ai_ci |     NULL |                |         |
-    +--------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+--------------------+----------+----------------+---------+
-    1 row in set (0.00 sec)
+Могут ли в одной системе сочетаться принципы BASE и ACID? Почему?
 
-## InnoDB 
-
-    mysql> ALTER TABLE orders ENGINE = MyISAM;
-    Query OK, 5 rows affected (0.05 sec)
-    Records: 5  Duplicates: 0  Warnings: 0
-
-    mysql> ALTER TABLE orders ENGINE = InnoDB;
-    Query OK, 5 rows affected (0.17 sec)
-    Records: 5  Duplicates: 0  Warnings: 0
-
-    mysql> SHOW PROFILES;
-    +----------+------------+-----------------------------------------+
-    | Query_ID | Duration   | Query                                   |
-    +----------+------------+-----------------------------------------+
-    |       19 | 0.00305375 | show table status where name = 'orders' |
-    |       20 | 0.05543375 | ALTER TABLE orders ENGINE = MyISAM      |
-    |       21 | 0.16775600 | ALTER TABLE orders ENGINE = InnoDB      |
-    +----------+------------+-----------------------------------------+
-    3 rows in set, 1 warning (0.00 sec)
+Нет, не могут. BASE - это противопоставление ACID. Например, ACID гарантирует консистентность данных после транзакции, BASE же допускает возврат неверных данных.
 
 ## Задача 4
 
-    [mysqld]
-    pid-file        = /var/run/mysqld/mysqld.pid
-    socket          = /var/run/mysqld/mysqld.sock
-    datadir         = /var/lib/mysql
-    secure-file-priv= NULL
+Вам дали задачу написать системное решение, основой которого бы послужили:
 
-    innodb_flush_log_at_trx_commit = 2 
-    innodb_file_per_table = 1
-    autocommit = 0
-    innodb_log_buffer_size	= 1M
-    key_buffer_size = 1228М
-    max_binlog_size	= 100M
+    фиксация некоторых значений с временем жизни
+    реакция на истечение таймаута
+
+Вы слышали о key-value хранилище, которое имеет механизм Pub/Sub. Что это за система? Какие минусы выбора данной системы?
+
+Redis. 
+    Из лекции понял, что если использовать Redis по его прямому назначению, то минусов практически нет, не стоит его использовать как долговременное хранилище данных.
+    К главному минусу можно отнести только то, что он может положить всю сеть при развале репликации, если начнет качать всю базу.
+    из нюансов:
+    Если же все таки нужно хранить данные, то стоит часто писать на диск или выдергивать их в другую БД
+    При пике нагрузки озу может удалить старые ключи
+    Lua можно относить как к плюсам так и к минусам т.к в некоторых случаях может и положить базу
+    
