@@ -130,4 +130,49 @@ Dockerfile:
 
 ## Задача 3
 
+Создал папку /opt/elasticsearch-8.5.3/snapshots и добавил в elasticsearch.yml строку path.repo: /opt/elasticsearch-8.5.3/snapshots
 
+запрос на регистрацию snapshot repo:
+
+	[elasticsearch@3f0e1efe3b21 elasticsearch-8.5.3]$ curl -X PUT --insecure -u elastic https://localhost:9200/_snapshot/netology_backup?pretty -H 'Content-Type: application/json' -d' { "type": "fs", "settings": { "location": "/opt/elasticsearch-8.5.3/snapshots"}}'
+	Enter host password for user 'elastic':
+	{
+	  "acknowledged" : true
+	}
+
+Создайте индекс test с 0 реплик и 1 шардом и приведите в ответе список индексов.
+
+	[elasticsearch@3f0e1efe3b21 snapshots]$ curl -X GET --insecure -u elastic:elastic "https://localhost:9200/_cat/indices?v=true"
+	health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+	green  open   test  Vpi_jA3lQkub6U9VPF-gOg   1   0          0            0       225b           225b
+
+Создайте snapshot состояния кластера elasticsearch.
+
+Приведите в ответе список файлов в директории со snapshotами.
+
+	[elasticsearch@3f0e1efe3b21 snapshots]$ ll
+	total 32
+	-rw-r--r--. 1 elasticsearch elasticsearch  1107 Dec 11 19:16 index-0
+	-rw-r--r--. 1 elasticsearch elasticsearch     8 Dec 11 19:16 index.latest
+	drwxr-xr-x. 5 elasticsearch elasticsearch    96 Dec 11 19:16 indices
+	-rw-r--r--. 1 elasticsearch elasticsearch 18575 Dec 11 19:16 meta-euhl0mVEQoeXYx0r0WqpIg.dat
+	-rw-r--r--. 1 elasticsearch elasticsearch   395 Dec 11 19:16 snap-euhl0mVEQoeXYx0r0WqpIg.dat
+	
+Удалите индекс test и создайте индекс test-2. Приведите в ответе список индексов.
+	
+	[elasticsearch@3f0e1efe3b21 elasticsearch-8.5.3]$ curl -X GET --insecure -u elastic:elastic "https://localhost:9200/_cat/indices?v=true"
+	health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+	green  open   test-2 75Zsq70zQmu_jhemtM7LKA   1   0          0            0       225b           225b
+
+Восстановите состояние кластера elasticsearch из snapshot, созданного ранее.
+
+	[elasticsearch@3f0e1efe3b21 elasticsearch-8.5.3]$ curl -X POST --insecure -u elastic https://localhost:9200/_snapshot/netology_backup/my_snapshot_2022.12.11/_restore?pretty                                  
+	Enter host password for user 'elastic':
+	{
+	  "accepted" : true
+	}
+
+	[elasticsearch@3f0e1efe3b21 elasticsearch-8.5.3]$ curl -X GET --insecure -u elastic:elastic "https://localhost:9200/_cat/indices?v=true"
+	health status index  uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+	green  open   test-2 75Zsq70zQmu_jhemtM7LKA   1   0          0            0       225b           225b
+	green  open   test   tCDWDbK_QE2mUZnIgrvSwA   1   0          0            0       225b           225b
