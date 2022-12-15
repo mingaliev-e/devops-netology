@@ -33,7 +33,7 @@ Terraform will perform the following actions:
       + id                        = (known after apply)
       + metadata                  = {
           + "ssh-keys" = <<-EOT
-                centos:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC60OOJfFBx4qoFYFzdVNSPNMEKK4skkeMqlLVeZu7c5okd/JvCNO2e51pVyA7oaJ1IGKEkkKmrWxVxIKLnKorWAB9Gv1dEMM3iXbTxwzUCl2r2pZzt5WztDcDtWB07VvgnXc0/jBBOdjI/KItDU0ni6XQKlUj366Uu0CG0tvM5qriE7mDyWNTqtT8pYhREZrByv1j/2iYceTNLpFAhKhC5Pqaom4uNQSUZH8MVn77Dl4wcjeAb0xXzZeeTJXfYBVhPmOLN0udjGl5dkmYIjlPcTIdLF0UjRt3NDJljCbnkj/FruarUhwpQeYHbIbD3+lc2fgzc/EQDVgTr/RZn9/LAtGOwD8SJDO7SxmfXqrxQdvfqDqfn5h6FpTmtE6seXHK5X0RBCZU1Qmk3o+/rxlgFsTojS/xYlNXGLYGfRcCStP0aTxEB9uDgYFY13WVqBJBTYe/czSMxKJVko6x5sUh85xgWAyFTBhKHoa7Xngd5p/Cp9Uq6wpMGXCJ2TVA1SXc= root@localhost.localdomain
+                ubuntu:ssh-rsa AAAAB3NzaC1yc2EAAAADAQAfgngfnfgnfnFBx4qoFYFzdVNSPNMEKK4skkeMnNVKDJVNkjvsk86VDSv76e51pVyA7oafnfgnfgngfnzgnKDVKHDVbdvbhbdvEMM3iXbTxwzUCl2r2pZzt5WztDcDtWB07VvgnXc0/jBBOdjI/KItDU0ni6XQKlUj366Uu0CG0tvM5qriE7mDyWNTqtT8pYhREZrByv1j/2iYceTNLpFAhKhC5Pqaom4uNQSUZH8MVn77Dl4wcjeAb0xXzZeeTJXfYBVhPmOLN0udjGl5dkmYIjlPcTIdLF0UjRt3NDJljCbnkj/FruarUhwpQeYHbIbD3+lc2fgzc/EQDVgTr/RZn9/LAtGOwD8SJDO7SxmfXqrxQdvfqDqfn5h6FpTmtE6seXHK5X0RBCZU1Qmk3o+/rxlgFsTojS/xYlNXGLYGfRcCStP0aTxEB9uDgYFY13WVqBJBTYe/czSMxKJVko6x5sUh85xgWAyFTBhKHoa7Xngd5p/Cp9Uq6wpMGXCJ2TVA1SXc= root@localhost.localdomain
             EOT
         }
       + name                      = "node01"
