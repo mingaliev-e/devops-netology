@@ -8,7 +8,7 @@ https://github.com/mingaliev-e/vector-role
 
 https://github.com/mingaliev-e/lighthouse-role
 
-Создал какталоги с помощью ansible-galaxy init rolname
+Создал какталоги с помощью ansible-galaxy init rolename
 
 Раскидал все tasks, handlers, templates и переменные по ролям 
 
