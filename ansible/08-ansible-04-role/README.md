@@ -179,5 +179,7 @@ https://github.com/mingaliev-e/lighthouse-role
       lighthouse-01              : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
       vector-01                  : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
      
+Плейбук отработал корректно 
 
- 
+ ![image](https://user-images.githubusercontent.com/111060072/217643379-23fdf278-2341-4e12-a4f5-0df893ac800b.png)
+
