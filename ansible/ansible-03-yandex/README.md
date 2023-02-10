@@ -1,54 +1,85 @@
 ## Домашнее задание к занятию "3. Использование Yandex Cloud"
 Плейбук устанавливает Clickhouse, Vector и Lighthouse на хосты, указанные в inventory файле. 
 
-В переменных group_vars созданы 2 папки с файлами которые содержат список переменных для обоих серверов по отдельности
+В директории group_vars созданы 3 папки с файлами которые содержат список переменных для обоих серверов по отдельности
 
-      /group_vars/clickhouse/clickhouse.yml
-      clickhouse_version - версия пакета Clickhouse
-      clickhouse_packages - список rpm пакетов
+| Name | Default Value | Description |
+|:-----|:--------------|:------------|
+| *{{ clickhouse_version }}* | 22.3.3.44                 | Clickhouse package version |
+| *{{clickhouse_packages }}* | clickhouse-client         | List of installed packages |
+|                            | clickhouse-server         |                            |
+|                            | clickhouse-common-static  |                            |
+| *{{vector_version}}*       | 0.27.0                    | Vector package version     |
+| *{{lighthouse_url}}* |https://github.com/VKCOM/lighthouse.git  | link to git repository |
+| *{{lighthouse_dir}}* | /usr/share/nginx/html/lighthouse | directory where to download repository files |
+| *{{lighthouse_nginx_user}}* | root | nginx user |
 
-      /group_vars/vector/vector.yml
-      vector_version - версия пакета Vector
+inventori list
 
-      /group_vars/lighthouse/lighthouse.yml
-      lighthouse_url: ссылка на репозиторий git
-      lighthouse_dir: директория куда скачать файлы репозитория
-      lighthouse_nginx_user: пользователь под которым будет работать nginx
+      ---
 
-inventori состоит из 3х групп хостов 
+      clickhouse:
+        hosts:
+          clickhouse-01:
+            ansible_host: 
+            ansible_user: 
+
+      vector:
+        hosts:
+          vector-01:
+            ansible_host: 
+            ansible_user: 
+
+      lighthouse:
+        hosts:
+          lighthouse-01:
+            ansible_host: 
+            ansible_user: 
 
 Плейбук состоит из нескольких блоков. В них записаны таски, которые скачивают rmp пакеты clickhouse
 
-Список тасок и что они делают 
+Tasks list 
 
-      name: Get clickhouse distrib - скачивают пакеты clickhouse
-      name: Install clickhouse packages - устанавливают пакеты с помощью yum (disable_gpg_check: true - потому что отваливается с ошибкой проверки GPG)
-      name: Flush handlers - нужен для старта сервиса clickhouse-server
-      name: Create database - создает БД logs 
-      name: Get vector distrib - скачивает пакет vector
-      name: Install vector packages - устанавливает пакет vector (disable_gpg_check: true - потому что отваливается с ошибкой проверки GPG)
-      name: Create vector config file - передает файл конфига Vector на сервер vector в папку /etc/vector/
-      name: Vector systemd unit - создает юнит для службы векта и указывает где лежит файл конфига после чего перезапускается vector
-      name: systemctl daemon-reload - перезапуск служб
-      name: Install epel-release - установить пакеты epel-release
-      name: Install nginx - установит Nginx
-      name: Create nginx config - создаст файл конфигурации из шаблона
-      name: Lighthouse | Install git - установит git
-      name: Lighthouse | Clone repository - склонирует репозиторий в директорию
-      name: Create Lighthouse config - создаст файл конфигурации из шаблона
+| Task | Description |
+|:-----|:------------|
+| Get clickhouse distrib | скачивают пакеты clickhouse |
+| Install clickhouse packages | устанавливают пакеты с помощью yum (disable_gpg_check: true - потому что отваливается с ошибкой проверки GPG) |
+| Flush handlers | Старт сервиса clickhouse-server |
+| Create database | создает БД logs |
+| Get vector distrib | скачивает пакет vector |
+| Install vector packages | устанавливает пакет vector (disable_gpg_check: true - потому что отваливается с ошибкой проверки GPG) |
+| Create vector config file | передает файл конфига Vector на сервер vector в папку /etc/vector/ |
+| Vector systemd unit | создает юнит для службы векта и указывает где лежит файл конфига после чего перезапускается vector |
+| systemctl daemon-reload | перезапуск служб |
+| Install epel-release | установить пакеты epel-release |
+| Install nginx | установит Nginx |
+| Create nginx config | создаст файл конфигурации из шаблона |
+| Lighthouse Install git | установит git |
+| Lighthouse Clone repository | склонирует репозиторий в директорию |
+| Create Lighthouse config | создаст файл конфигурации из шаблона |
 
-      
-В teamplates созданы файл конфига и юнита для Vector
+В teamplates созданы файл конфига и юнита для Vector и Lighthouse
+
+
+| teamplate | Description |
+|:----------|:------------|
+| vector.yml.j2 | Vector config file |
+| vector.service.j2 | Systemd Unit configuration file |
+| lighthouse_nginx.conf.j2 | Lighthouse configuration |
+| nginx.conf.j2 | Nginx configuration |
 
 ## Параметры плейбука
 
-      name: Наименование Play
-      hosts: список хостов, на которых нужно выполнить плейбук
-      handlers: обработчик событий, запускаются если какой то task обратился к ним(в нашем случае запуск различных служб)
-      pre_tasks: список tasks, которые нужно выполнить в первую очередь, до выполнения основных tasks
-      tasks: основной набор действий, которые должны быть выполнены на хостах
+
+| Parameter | Deskription |
+|:-----|:-------|
+| name | Наименование Play |
+| hosts | список хостов, на которых нужно выполнить плейбук |
+| handlers | обработчик событий, запускаются если какой то task обратился к ним(в нашем случае запуск различных служб) |
+| pre_tasks | список tasks, которые нужно выполнить в первую очередь, до выполнения основных tasks |
+| tasks | основной набор действий, которые должны быть выполнены на хостах |
       
-      Тегов в данном плейбуке нет, но теги нужны для того чтоб можног было пометить какой то task, и при необходимости выполнить только эту task, все остальные выполняться не будут.
+Тегов в данном плейбуке нет, но теги нужны для того чтоб можног было пометить какой то task, и при необходимости выполнить только эту task, все остальные выполняться не будут.
 
 ## Вывод плейбука:
 
