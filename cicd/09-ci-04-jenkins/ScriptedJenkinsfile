@@ -1,0 +1,26 @@
+node("linux"){
+parameters {
+  run filter: 'ALL', name: 'prod_run', projectName: ''
+}
+    stage("Git checkout"){
+        git credentialsId: '57006537-1c9b-4484-9e23-0c465b8ed455', url: 'git@github.com:aragastmatb/example-playbook.git'
+    }
+    stage("Sample define secret_check"){
+        secret_check=true
+    }
+    stage("Run playbook"){
+        if (prod_run.equals("false")){
+            sh '''
+            export PATH=$PATH:/usr/local/bin
+            ansible-playbook site.yml -i inventory/prod.yml --check --diff
+            '''
+        }
+        else if (prod_run.equals("true")) {
+            sh '''
+            export PATH=$PATH:/usr/local/bin
+            ansible-playbook site.yml -i inventory/prod.yml
+            '''
+        }
+        
+    }
+}
