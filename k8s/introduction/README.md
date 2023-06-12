@@ -48,3 +48,7 @@
 ![img_3.png](img_3.png)
 
 ![img.png](img.png)
+
+        admincm@Happy-Dev:~$ kubectl get nodes -o wide
+        NAME        STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+        happy-dev   Ready    <none>   58m   v1.27.2   192.168.1.69   <none>        Ubuntu 20.04.6 LTS   5.15.0-73-generic   containerd://1.6.15
