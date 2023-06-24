@@ -6,5 +6,5 @@ metadata:
     app: web
 spec:
   containers:
-  - name: ngnix
+  - name: nginx
     image: gcr.io/kubernetes-e2e-test-images/echoserver:2.2
