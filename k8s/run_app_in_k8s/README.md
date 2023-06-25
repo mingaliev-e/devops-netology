@@ -20,7 +20,7 @@
 
 5. Создать отдельный Pod с приложением multitool и убедиться с помощью `curl`, что из пода есть доступ до приложений из п.1.
 
-![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/a8d0644d-7bb1-4062-b3c0-37900ee5d823)
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/5b26f047-715c-4a63-bc94-271d66c3a400)
 
 ### Задание 2. Создать Deployment и обеспечить старт основного контейнера при выполнении условий
 
