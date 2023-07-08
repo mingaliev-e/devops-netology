@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: multitool-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: multitool
+  template:
+    metadata:
+      labels:
+        app: multitool
+    spec:
+      containers:
+        - name: multitool
+          image: praqma/network-multitool
+          volumeMounts:
+            - name: syslog-volume
+              mountPath: /node-syslog
+              readOnly: true
+          env:
+          - name: HTTP_PORT
+            value: "8080"
+      volumes:
+        - name: syslog-volume
+          hostPath:
+            path: /var/log/syslog
