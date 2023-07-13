@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multitool-deployment
+spec:
+  selector:
+    matchLabels:
+      app: multitool
+  template:
+    metadata:
+      labels:
+        app: multitool
+    spec:
+      containers:
+        - name: multitool
+          image: praqma/network-multitool
+          volumeMounts:
+            - name: nfs-volume
+              mountPath: "/read-write"
+          env:
+          - name: HTTP_PORT
+            value: "8080"
+      volumes:
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: nfs-pvc
