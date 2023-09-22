@@ -38,32 +38,34 @@
 3) Включение forwarding
 
 
-    sudo -i \
-    modprobe br_netfilter \
-    echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf \
-    echo "net.bridge.bridge-nf-call-iptables=1" >> /etc/sysctl.conf \
-    echo "net.bridge.bridge-nf-call-arptables=1" >> /etc/sysctl.conf \
-    echo "net.bridge.bridge-nf-call-ip6tables=1" >> /etc/sysctl.conf \
-    sysctl -p /etc/sysctl.conf
+        sudo -i \
+        modprobe br_netfilter \
+        echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf \
+        echo "net.bridge.bridge-nf-call-iptables=1" >> /etc/sysctl.conf \
+        echo "net.bridge.bridge-nf-call-arptables=1" >> /etc/sysctl.conf \
+        echo "net.bridge.bridge-nf-call-ip6tables=1" >> /etc/sysctl.conf \
+        sysctl -p /etc/sysctl.conf
 
 4) Инициализируем кластер
 
     
-    sudo kubeadm init \
-    --apiserver-advertise-address=10.128.0.9 \
-    --pod-network-cidr 10.244.0.0/16 \
-    --apiserver-cert-extra-sans=51.250.95.72
+        sudo kubeadm init \
+        --apiserver-advertise-address=10.128.0.9 \
+        --pod-network-cidr 10.244.0.0/16 \
+        --apiserver-cert-extra-sans=51.250.95.72
 
 
-      mkdir -p $HOME/.kube \
-      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config \ 
-      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+          mkdir -p $HOME/.kube \
+          sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config \ 
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 5) На Worker nodes производим тоже самое 
 6) Подклюаем worker
 
     
-    sudo kubeadm join 10.128.0.9:6443 --token q6zdnb.6xx6fbx9993ljzmj \
-    --discovery-token-ca-cert-hash sha256:faae4e424d5fa2d01bb08389597d2fb7498dbfa79df62460dc940c8305e9f2be
+        sudo kubeadm join 10.128.0.9:6443 --token q6zdnb.6xx6fbx9993ljzmj \
+        --discovery-token-ca-cert-hash sha256:faae4e424d5fa2d01bb08389597d2fb7498dbfa79df62460dc940c8305e9f2be
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/6b0cf068-fff7-4ad1-baf0-b52c282b3f67)
 
 ![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/24c7ea7e-8756-4a29-a70a-ad811c886259)
