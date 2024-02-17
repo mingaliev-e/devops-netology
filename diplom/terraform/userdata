@@ -1,0 +1,8 @@
+#cloud-config
+users:
+  - name: admincm
+    groups: sudo
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8jRF/dQVYJMqOwYQfgESpJf9XleBoyTqWrCDo+s8x9hDjLdyE+yEWhg1HHz5L5vK5rr9gX45UE8VpIKVLXZ4UBdQ/DGQP3fM4Ipt08n1HppyH742m8RRN9vuFlx6/tZKx67kHNESDQ4OiMV1VQEALWGwqQ3+QcooJ6v16hzBz1zw5w6wxP1UGTU8J2DW/jRF9PCCjOhVFoU8qtTTPIW9F6yEaboH9m6q+jDu+4zTSh2P0b1JYXf+Ro0omGNfGaOzud9vB387gtpHMtTpEA/cOBtI4x95NLAFd9ATig5RVyfX3ECJ33oDZFxPSOKft+NEtu5RClQ0ORogXIAIqYBimSsL14dpRfgRd5M6Keh+Eqb1zCwQv5zXUQXjNgwjbimXfkB7IMLwwiGQZptfq9Pp2QegYClng9gR+eJVIL6c+o69Tm09LgCDvRqP+afstWamNaNdjEXIm8HxxJvZNcm1xEbQgSa/KJb6fmwimCHnIomA7D3bXQLoUjeCAJjviYp0= admincm@kubectl

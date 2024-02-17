@@ -70,13 +70,33 @@ PS. Дипломную работу выполнял на основе того,
 
 ## Инфраструктура кластера K8S
 
-![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/ae214e81-7e73-4a38-9fbf-e1cf6d457407)
+Все ВМ развернуты с помощью terraform
 
-Кластер состоит из 1 master ноды и 2 worker нод
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/08f5361f-f62d-4870-a52a-33a5afe7bb25)
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/05d400d7-ffb0-4750-8ea2-99d202e29706)
+
+Так же статус лог сохраняется в созданый Bucket-backend для Terraform
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/130f0940-6a4a-419c-a15d-dc10d033cbbd)
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/4ac1426f-4a32-4d37-a9ea-4e9177901ea5)
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/ce106e7e-dd1d-45fc-925f-e6e5ed6ca7c0)
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/b643f9d4-ed89-4358-89aa-d5951db064f1)
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/da1dc53f-a0ec-4d42-bfc2-2dad8698c880)
+
+Так же для удобство созданы 2 статических ip для мастер нод 
+
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/142d2140-9b30-421f-b782-d4c9449f8ac0)
+
+Кластер состоит из 2 master нод и 2 worker нод
 
 Развертывание выполнялось с помощью kubespray
 
-![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/222b1793-9527-4abe-85b5-fe1d6430c234)
+![image](https://github.com/mingaliev-e/devops-netology/assets/111060072/bc9e02c9-5de4-4d8e-b691-9787444ff688)
 
 ## GitLab
 
